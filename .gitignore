@@ -1,0 +1,63 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+wheels/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ── Storage data ──────────────────────────────────────────────────────────────
+# Don't commit uploaded files — mount this as a Docker volume instead
+data/
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.dockerignore
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ── IDEs & editors ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/

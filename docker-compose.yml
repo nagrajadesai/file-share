@@ -1,0 +1,9 @@
+services:
+  fileshare:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount a local directory as storage — change ./data to any path you like
+      - ./data:/data
+    restart: unless-stopped

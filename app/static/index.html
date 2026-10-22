@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FileShare</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-left">
+      <span class="material-icons logo-icon">folder_shared</span>
+      <span class="logo-text">FileShare</span>
+    </div>
+    <div class="search-bar">
+      <span class="material-icons search-icon">search</span>
+      <input type="text" id="searchInput" placeholder="Search in FileShare" autocomplete="off"/>
+      <button id="clearSearch" class="icon-btn" style="display:none" title="Clear search">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" title="Toggle view" id="toggleView">
+        <span class="material-icons" id="viewIcon">grid_view</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Main Layout ── -->
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <button class="new-btn" id="openNewMenu">
+        <span class="material-icons">add</span>
+        New
+      </button>
+      <!-- New menu dropdown -->
+      <div class="dropdown" id="newMenu">
+        <button class="dropdown-item" id="createFolderBtn">
+          <span class="material-icons">create_new_folder</span> New Folder
+        </button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" id="uploadFileBtn">
+          <span class="material-icons">upload_file</span> File Upload
+        </button>
+        <button class="dropdown-item" id="uploadFolderBtn">
+          <span class="material-icons">drive_folder_upload</span> Folder Upload
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" id="navHome" href="#" onclick="navigateTo('');return false;">
+          <span class="material-icons">home</span> My Files
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Content area -->
+    <main class="content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb" id="breadcrumb">
+        <span class="bc-item bc-home" onclick="navigateTo('')">
+          <span class="material-icons bc-icon">home</span> My Files
+        </span>
+      </div>
+
+      <!-- Toolbar (actions when items selected) -->
+      <div class="toolbar" id="toolbar" style="display:none">
+        <span id="selectedCount">0 selected</span>
+        <button class="toolbar-btn danger" id="bulkDeleteBtn" title="Delete selected">
+          <span class="material-icons">delete</span> Delete
+        </button>
+      </div>
+
+      <!-- Drop zone overlay -->
+      <div class="drop-overlay" id="dropOverlay">
+        <span class="material-icons drop-icon">cloud_upload</span>
+        <p>Drop files here to upload</p>
+      </div>
+
+      <!-- File grid/list -->
+      <div class="file-area" id="fileArea">
+        <div class="loading" id="loading">
+          <span class="material-icons spinning">refresh</span>
+          Loading…
+        </div>
+        <div id="emptyState" class="empty-state" style="display:none">
+          <span class="material-icons empty-icon">folder_open</span>
+          <p>This folder is empty</p>
+          <p class="empty-sub">Upload files or create a new folder to get started</p>
+        </div>
+        <div id="fileGrid" class="file-grid"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ── Hidden file inputs ── -->
+  <input type="file" id="fileInput" multiple style="display:none"/>
+  <input type="file" id="folderInput" multiple webkitdirectory style="display:none"/>
+
+  <!-- ── Modals ── -->
+  <!-- Create Folder -->
+  <div class="modal-overlay" id="folderModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="material-icons">create_new_folder</span>
+        <h3>New Folder</h3>
+      </div>
+      <input type="text" id="folderNameInput" placeholder="Untitled folder" class="modal-input"/>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="cancelFolder">Cancel</button>
+        <button class="btn-primary" id="confirmFolder">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename (reuse for folder name) -->
+  <div class="modal-overlay" id="renameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="material-icons">drive_file_rename_outline</span>
+        <h3>Rename</h3>
+      </div>
+      <input type="text" id="renameInput" class="modal-input"/>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="cancelRename">Cancel</button>
+        <button class="btn-primary" id="confirmRename">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirm -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="material-icons" style="color:var(--danger)">delete_forever</span>
+        <h3>Delete</h3>
+      </div>
+      <p id="deleteMsg" style="color:var(--text-secondary);margin:0 0 1.5rem">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="cancelDelete">Cancel</button>
+        <button class="btn-danger" id="confirmDelete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Context menu -->
+  <div class="context-menu" id="contextMenu">
+    <button class="ctx-item" id="ctxDownload"><span class="material-icons">download</span> Download</button>
+    <button class="ctx-item" id="ctxCopyLink"><span class="material-icons">link</span> Copy link</button>
+    <div class="ctx-divider"></div>
+    <button class="ctx-item danger" id="ctxDelete"><span class="material-icons">delete</span> Delete</button>
+  </div>
+
+  <!-- Upload progress panel -->
+  <div class="upload-panel" id="uploadPanel" style="display:none">
+    <div class="upload-panel-header">
+      <span id="uploadPanelTitle">Uploading…</span>
+      <button class="icon-btn" id="closeUploadPanel"><span class="material-icons">close</span></button>
+    </div>
+    <div id="uploadList"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
