@@ -74,24 +74,6 @@ docker run -d -p 8000:8000 -v ${PWD}/data:/data --name fileshare fileshare
 
 ---
 
-## Keyboard Shortcuts
-
-| Key | Action |
-|-----|--------|
-| `Ctrl+A` | Select all |
-| `Delete` | Delete selected |
-| `Escape` | Deselect all / close modal |
-
----
-
-## Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `STORAGE_PATH` | `/data` | Path to storage directory inside container |
-
----
-
 ## Container Management
 
 ```bash
